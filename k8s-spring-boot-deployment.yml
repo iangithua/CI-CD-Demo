@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ci-cd-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ci-cd-demo
+  template:
+    metadata:
+      labels:
+        app: ci-cd-demo
+    spec:
+      containers:
+        - name: back-end
+          image: iangithua/back-end:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8081"
+
+        - name: front-end
+          image: iangithua/front-end:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: PORT
+              value: "8082"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ci-cd-demo
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8082
+  selector:
+    app: ci-cd-demo
